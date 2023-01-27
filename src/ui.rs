@@ -33,6 +33,7 @@ pub const SHOW_HIPER_WINDOW: Selector = Selector::new("show-hiper-window");
 fn main_page() -> Box<dyn Widget<AppState>> {
     Flex::column()
         // .with_child(label::new("NetCha").with_font(typography::SUBHEADER))
+        .with_child(label::new("快速、稳定、简单 - 轻松畅游 无限欢乐").show_if(|data: &AppState, _| !data.ip.is_empty()))
         .with_child(label::new("①.请先点击下方按钮，获取兑换码").show_if(|data: &AppState, _| data.ip.is_empty()).padding((0., 5.)))
         .with_child(Button::new("轻松入门").show_if(|data: &AppState, _| data.ip.is_empty()).on_click(|_, _, _| {
             open_url("https://www.yuque.com/ffip/netcha");
