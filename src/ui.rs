@@ -34,7 +34,7 @@ fn main_page() -> Box<dyn Widget<AppState>> {
     Flex::column()
         // .with_child(label::new("NetCha").with_font(typography::SUBHEADER))
         .with_child(label::new("①.请先点击下方按钮，获取兑换码").show_if(|data: &AppState, _| data.ip.is_empty()).padding((0., 5.)))
-        .with_child(Button::new("加入群聊").show_if(|data: &AppState, _| data.ip.is_empty()).on_click(|_, _, _| {
+        .with_child(Button::new("轻松入门").show_if(|data: &AppState, _| data.ip.is_empty()).on_click(|_, _, _| {
             open_url("https://www.yuque.com/ffip/netcha");
         })).with_spacer(5.)
         .with_child(label::new("②.将兑换码复制到下方输入框").show_if(|data: &AppState, _| data.ip.is_empty()).padding((0., 5.)))
