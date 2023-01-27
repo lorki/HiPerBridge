@@ -60,7 +60,7 @@ fn main() {
     #[cfg(target_os = "linux")]
     {
         if !nix::unistd::getuid().is_root() {
-            println!("HiPer Bridge requires root user to run!");
+            println!("NetCha requires root user to run!");
             println!("Use sudo/su to rerun to start as a root user!");
             return;
         }
@@ -68,7 +68,7 @@ fn main() {
 
     let mut state = AppState::default();
     tray::init_tray();
-    tray::set_tooltip("HiPer Bridge");
+    tray::set_tooltip("奶茶 x 快连");
 
     load_config(&mut state);
 
@@ -104,7 +104,7 @@ fn main() {
         let app = AppLauncher::with_window({
             let desc =
                 WindowDesc::new(
-                    WindowWidget::new("HiPer Bridge", ui::ui_builder())
+                    WindowWidget::new("奶茶 x 快连", ui::ui_builder())
                         .on_command(SHOW_HIPER_WINDOW, |ctx, _, _data| {
                             ctx.submit_command(CONFIGURE_WINDOW.with(
                                 WindowConfig::default().set_window_state(WindowState::Restored),
@@ -167,7 +167,7 @@ fn main() {
                 .resizable(false)
                 .window_size(size)
                 .window_size_policy(WindowSizePolicy::User)
-                .title("HiPer Bridge");
+                .title("奶茶 x 快连");
             #[cfg(target_os = "macos")]
             {
                 desc
@@ -277,7 +277,7 @@ fn main() {
 
         let t = Instant::now();
 
-        tray::notify("HiPer Bridge 正在后台运行", "右键托盘图标重新打开主窗口");
+        tray::notify("NetCha 正在后台运行", "右键托盘图标重新打开主窗口");
 
         if let tray::TrayMessage::Exit = tray::take_command() {
             let state = saved_app_state.lock().unwrap().to_owned();

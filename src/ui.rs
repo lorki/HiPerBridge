@@ -32,8 +32,13 @@ pub const SHOW_HIPER_WINDOW: Selector = Selector::new("show-hiper-window");
 
 fn main_page() -> Box<dyn Widget<AppState>> {
     Flex::column()
-        // .with_child(label::new("HiPer Bridge").with_font(typography::SUBHEADER))
-        .with_child(label::new("轻快若风 x 安如磐石 - 最佳跨区域组网方案"))
+        // .with_child(label::new("NetCha").with_font(typography::SUBHEADER))
+        .with_child(label::new("①.请先点击下方按钮，获取兑换码").show_if(|data: &AppState, _| data.ip.is_empty()).padding((0., 5.)))
+        .with_child(Button::new("加入群聊").show_if(|data: &AppState, _| data.ip.is_empty()).on_click(|_, _, _| {
+            open_url("https://www.yuque.com/ffip/netcha");
+        })).with_spacer(5.)
+        .with_child(label::new("②.将兑换码复制到下方输入框").show_if(|data: &AppState, _| data.ip.is_empty()).padding((0., 5.)))
+        .with_child(label::new("③.点击启动按钮，加入网络").show_if(|data: &AppState, _| data.ip.is_empty()).padding((0., 5.)))
         .with_spacer(10.)
         .with_flex_child(
             label::dynamic(|data: &AppState, _| data.warning.to_owned())
@@ -113,11 +118,6 @@ fn main_page() -> Box<dyn Widget<AppState>> {
                 )
                 .cross_axis_alignment(widget::CrossAxisAlignment::End)
                 .show_if(|data: &AppState, _| !data.ip.is_empty()),
-        )
-        .with_child(
-            label::new("配置索引")
-                .show_if(|data: &AppState, _| data.ip.is_empty())
-                .padding((0., 5.)),
         )
         .with_child(
             PasswordBox::new()
@@ -208,18 +208,8 @@ fn setting_page() -> Box<dyn Widget<AppState>> {
             }
         }))
         .with_spacer(10.)
-        .with_child(label::new("关于"))
-        .with_spacer(10.)
-        .with_child(label::new("HiPer Bridge v0.0.8"))
-        .with_child(label::new("轻量级 HiPer 启动器"))
-        .with_child(label::new("By SteveXMH"))
-        .with_spacer(10.)
-        .with_child(label::new("HiPer / Matrix"))
+        .with_child(label::new("奶茶 x 快连 v0.0.8"))
         .with_child(label::new("一款轻量、敏捷、去中心化的跨区域组网系统"))
-        .with_spacer(10.)
-        .with_child(Button::new("使用帮助").on_click(|_, _, _| {
-            open_url("https://www.yuque.com/ffip/hiper/hb");
-        }))
         .cross_axis_alignment(widget::CrossAxisAlignment::Fill)
         .padding((10., 10.))
         .scroll()
@@ -235,7 +225,7 @@ fn mac_init() -> Box<dyn Widget<AppState>> {
     Flex::column()
         .with_child(label::new("提权初始化提示").with_text_size(16.))
         .with_spacer(10.)
-        .with_child(label::new("由于 MacOS 严格的权限体系，HiPer Bridge 需要管理员权限注册 HiPer 系统网络服务，若出现验证提示，请通过验证允许。"))
+        .with_child(label::new("由于 MacOS 严格的权限体系，NetCha 需要管理员权限注册系统网络服务，若出现验证提示，请通过验证允许。"))
         .with_flex_spacer(1.)
         .with_flex_child(
             label::dynamic(|data: &AppState, _|
@@ -247,7 +237,7 @@ fn mac_init() -> Box<dyn Widget<AppState>> {
             1.
         )
         .with_flex_spacer(1.)
-        .with_child(Button::new("允许并授权初始化 HiPer Bridge").with_accent(true).on_click(|ctx, _, _| {
+        .with_child(Button::new("允许并授权初始化 NetCha").with_accent(true).on_click(|ctx, _, _| {
             let ctx = ctx.get_external_handle();
             std::thread::spawn(move || {
                 if let Err(err) = crate::mac::install_hiper(ctx.to_owned()) {

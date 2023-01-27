@@ -105,7 +105,7 @@ pub fn get_hiper_dir() -> DynResult<PathBuf> {
     #[cfg(target_os = "macos")]
     {
         if let Some(user_path) = dirs::data_local_dir() {
-            Ok(user_path.join("HiPer Bridge"))
+            Ok(user_path.join("NetCha"))
         } else {
             anyhow::bail!("无法获取用户数据文件夹路径")
         }
@@ -133,19 +133,19 @@ pub fn run_hiper(ctx: ExtEventSink, token: String, use_tun: bool, _debug_mode: b
     #[cfg(not(windows))]
     let hiper_path = hiper_dir_path.join("hiper");
 
-    std::fs::create_dir_all(&hiper_dir_path).context("无法创建 HiPer 安装目录")?;
-    std::fs::create_dir_all(&certs_dir_path).context("无法创建 HiPer 凭证证书目录")?;
+    std::fs::create_dir_all(&hiper_dir_path).context("无法创建安装目录")?;
+    std::fs::create_dir_all(&certs_dir_path).context("无法创建证书目录")?;
 
     let cert_path = certs_dir_path.join(format!("{}.yml", token));
     let cert_path = cert_path
         .absolutize()
-        .context("无法获取凭证证书所在绝对目录")?;
+        .context("无法获取证书所在绝对目录")?;
 
     let logger_json_data = "\nlogging:\n  format: json";
 
     if cert_path.is_file() {
         // 确认配置是否设定了日志格式
-        let mut cert_data = std::fs::read_to_string(&cert_path).context("无法读取检查凭证证书")?;
+        let mut cert_data = std::fs::read_to_string(&cert_path).context("无法读取证书")?;
         let mut should_save = false;
 
         // 更新节点的代理信息
@@ -190,22 +190,22 @@ pub fn run_hiper(ctx: ExtEventSink, token: String, use_tun: bool, _debug_mode: b
         }
 
         if should_save {
-            write_file_safe(&cert_path, cert_data.as_bytes()).context("无法保存凭证证书")?;
+            write_file_safe(&cert_path, cert_data.as_bytes()).context("无法保存证书")?;
         }
     } else {
-        let _ = ctx.submit_command(SET_START_TEXT, "正在获取凭证证书", Target::Auto);
+        let _ = ctx.submit_command(SET_START_TEXT, "正在获取证书", Target::Auto);
         let res = tinyget::get(format!("https://cert.mcer.cn/{}.yml", token))
             .send()
-            .context("无法获取凭证证书，这有可能是因为下载超时或者是你的凭证无效")?;
+            .context("无法获取证书，这有可能是因为下载超时或者是你的兑换码无效")?;
         if res.status_code != 200 {
-            anyhow::bail!("无法获取凭证证书，这有可能是因为下载超时或者是你的凭证无效");
+            anyhow::bail!("无法获取证书，这有可能是因为下载超时或者是你的兑换码无效");
         }
         let mut cert_data = res
             .as_str()
-            .context("无法正确解码凭证证书数据，这有可能是下载出错了")?
+            .context("无法正确解码证书数据，这有可能是下载出错了")?
             .to_owned();
         cert_data.push_str(logger_json_data);
-        write_file_safe(&cert_path, cert_data.as_bytes()).context("无法保存凭证证书")?;
+        write_file_safe(&cert_path, cert_data.as_bytes()).context("无法保存证书")?;
     }
 
     if !use_tun && wintun_path.exists() {
@@ -261,18 +261,18 @@ pub fn run_hiper(ctx: ExtEventSink, token: String, use_tun: bool, _debug_mode: b
         let download_url = format!("https://gitcode.net/to/hiper/-/raw/master/{}/hiper", arch);
 
         if hiper_path.exists() {
-            let _ = ctx.submit_command(SET_START_TEXT, "正在检查 HiPer 更新", Target::Auto);
+            let _ = ctx.submit_command(SET_START_TEXT, "正在检查更新", Target::Auto);
 
             // 计算现有的 SHA1
             let mut s = sha1_smol::Sha1::default();
-            s.update(&std::fs::read(&hiper_path).context("无法读取 HiPer 程序以计算摘要")?);
+            s.update(&std::fs::read(&hiper_path).context("无法读取程序以计算摘要")?);
             let current_hash = s.hexdigest();
 
             let res = tinyget::get("https://gitcode.net/to/hiper/-/raw/master/packages.sha1")
                 .send()
-                .context("无法获取 HiPer 下载索引")?
+                .context("无法获取配置")?
                 .as_str()
-                .context("无法解析 HiPer 下载索引")?
+                .context("无法解析配置")?
                 .to_owned();
 
             for line in res.split('\n') {
@@ -285,29 +285,29 @@ pub fn run_hiper(ctx: ExtEventSink, token: String, use_tun: bool, _debug_mode: b
                         println!("Comparing {} {} {} {}", arch, path, hash, current_hash);
                         if hash != current_hash {
                             let _ =
-                                ctx.submit_command(SET_START_TEXT, "正在更新 HiPer", Target::Auto);
+                                ctx.submit_command(SET_START_TEXT, "正在更新", Target::Auto);
 
                             let res = tinyget::get(download_url.as_str())
                                 .send()
-                                .context("无法下载 HiPer 程序")?;
+                                .context("无法下载程序")?;
                             println!("HPR downloaded, size {}", res.as_bytes().len());
 
                             write_file_safe(&hiper_path, res.as_bytes())
-                                .context("无法更新 HiPer 程序")?;
+                                .context("无法更新程序")?;
                         }
                         break;
                     }
                 }
             }
         } else {
-            let _ = ctx.submit_command(SET_START_TEXT, "正在安装 HiPer", Target::Auto);
+            let _ = ctx.submit_command(SET_START_TEXT, "正在安装", Target::Auto);
 
             let res = tinyget::get(download_url.as_str())
                 .send()
-                .context("无法下载 HiPer 程序")?;
+                .context("无法下载程序")?;
             println!("HPR downloaded, size {}", res.as_bytes().len());
 
-            write_file_safe(&hiper_path, res.as_bytes()).context("无法安装 HiPer 程序")?;
+            write_file_safe(&hiper_path, res.as_bytes()).context("无法安装程序")?;
 
             #[cfg(unix)]
             {
@@ -315,12 +315,12 @@ pub fn run_hiper(ctx: ExtEventSink, token: String, use_tun: bool, _debug_mode: b
                     .arg("+x")
                     .arg(hiper_path.to_string_lossy().to_string())
                     .status()
-                    .context("无法对 HiPer 程序增加可执行权限！")?;
+                    .context("无法对程序增加可执行权限！")?;
             }
         }
     }
 
-    let _ = ctx.submit_command(SET_START_TEXT, "正在启动 HiPer", Target::Auto);
+    let _ = ctx.submit_command(SET_START_TEXT, "正在启动", Target::Auto);
 
     let mut child = Command::new(hiper_path);
 
@@ -342,14 +342,14 @@ pub fn run_hiper(ctx: ExtEventSink, token: String, use_tun: bool, _debug_mode: b
             .stderr(Stdio::piped())
             .creation_flags(0x08000000)
             .spawn()
-            .context("无法启动 HiPer")?;
+            .context("无法启动")?;
         #[cfg(not(windows))]
         let mut child = child
             .stdin(Stdio::null())
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
             .spawn()
-            .context("无法启动 HiPer")?;
+            .context("无法启动")?;
 
         plugin::dispatch_event("launch");
 
@@ -366,7 +366,7 @@ pub fn run_hiper(ctx: ExtEventSink, token: String, use_tun: bool, _debug_mode: b
                     match event {
                         CTRL_CLOSE_EVENT | CTRL_C_EVENT | CTRL_BREAK_EVENT | CTRL_LOGOFF_EVENT
                         | CTRL_SHUTDOWN_EVENT => {
-                            println!("[WARN] 请不要直接停止控制台窗口！请点击主窗口的关闭按钮关闭 HiPer Bridge！");
+                            println!("[WARN] 请不要直接停止控制台窗口！请点击主窗口的关闭按钮关闭 NetCha！");
                             stop_hiper_directly();
                         }
                         _ => {}
@@ -375,12 +375,12 @@ pub fn run_hiper(ctx: ExtEventSink, token: String, use_tun: bool, _debug_mode: b
                 }
                 SetConsoleCtrlHandler(Some(console_ctrl_handler), true);
                 println!(
-                    "[WARN] 请不要直接关闭控制台窗口！请点击主窗口的关闭按钮关闭 HiPer Bridge！"
+                    "[WARN] 请不要直接关闭控制台窗口！请点击主窗口的关闭按钮关闭 NetCha！"
                 );
             }
         }
 
-        let stdout = child.stdout.take().context("无法获取 HiPer 输出流")?;
+        let stdout = child.stdout.take().context("无法获取输出流")?;
         let mut stdout = BufReader::new(stdout);
         let mut buf = String::with_capacity(256);
 
@@ -435,8 +435,8 @@ pub fn run_hiper(ctx: ExtEventSink, token: String, use_tun: bool, _debug_mode: b
                                 })?;
                                 crate::tray::set_icon(true);
                                 crate::tray::notify(
-                                    "HiPer Bridge 正在运行！",
-                                    &format!("现在可以使用地址 {} 来访问 HiPer 网络了", ipv4),
+                                    "NetCha 正在运行！",
+                                    &format!("现在可以使用地址 {} 来访问网络了", ipv4),
                                 );
                                 plugin::dispatch_event("joined");
                                 sent = true;
@@ -453,7 +453,7 @@ pub fn run_hiper(ctx: ExtEventSink, token: String, use_tun: bool, _debug_mode: b
                                 "Hiper certificate for this point is expired" => {
                                     let _ = ctx_c.submit_command(
                                         SET_WARNING,
-                                        "警告：凭证已过期！请使用新的凭证密钥重试！".to_string(),
+                                        "警告：证书已过期！请使用新的证书兑换码重试！".to_string(),
                                         Target::Auto,
                                     );
                                     sent = false;
@@ -461,7 +461,7 @@ pub fn run_hiper(ctx: ExtEventSink, token: String, use_tun: bool, _debug_mode: b
                                 "Failed to open udp listener" => {
                                     let _ = ctx_c.submit_command(
                                         SET_WARNING,
-                                        "错误：HiPer无法监听服务端口，请确认端口占用情况"
+                                        "错误：无法监听服务端口，请确认端口占用情况"
                                             .to_string(),
                                         Target::Auto,
                                     );
@@ -470,7 +470,7 @@ pub fn run_hiper(ctx: ExtEventSink, token: String, use_tun: bool, _debug_mode: b
                                 "Failed to get a tun/tap device" => {
                                     let _ = ctx_c.submit_command(
                                         SET_WARNING,
-                                        "错误：无法获取 TUN/TAP 设备！这应该是你多开了 HiPer 导致设备被占用了".to_string(),
+                                        "错误：无法获取 TUN/TAP 设备！这应该是你多开导致设备被占用了".to_string(),
                                         Target::Auto,
                                     );
                                     sent = false;
@@ -517,7 +517,7 @@ pub fn run_hiper(ctx: ExtEventSink, token: String, use_tun: bool, _debug_mode: b
         if sent && !child.wait().map(|x| x.success()).unwrap_or(false) {
             let _ = ctx_c.submit_command(
                 SET_WARNING,
-                "警告：HiPer Bridge 意外退出！5 秒后将会自动重启！\n　　如需阻止自动重启，请点击关闭按钮！".to_string(),
+                "警告：NetCha 意外退出！5 秒后将会自动重启！\n　　如需阻止自动重启，请点击关闭按钮！".to_string(),
                 Target::Auto,
             );
             plugin::dispatch_event("crashed");
@@ -528,7 +528,7 @@ pub fn run_hiper(ctx: ExtEventSink, token: String, use_tun: bool, _debug_mode: b
         Ok(())
     });
 
-    let ip = reciver.recv().context("未能从 HiPer 输出中获取 IP 地址")?;
+    let ip = reciver.recv().context("未能从输出中获取 IP 地址")?;
 
     if ip.is_empty() {
         let _ = ctx.submit_command(SET_START_TEXT, "启动", Target::Auto);
@@ -536,7 +536,7 @@ pub fn run_hiper(ctx: ExtEventSink, token: String, use_tun: bool, _debug_mode: b
         if !has_token {
             let _ = ctx.submit_command(
                 SET_WARNING,
-                "错误：HiPer 入网失败！请检查凭证密钥是否填写正确！".to_string(),
+                "错误：入网失败！请检查凭证兑换码是否填写正确！".to_string(),
                 Target::Auto,
             );
         }
@@ -544,7 +544,7 @@ pub fn run_hiper(ctx: ExtEventSink, token: String, use_tun: bool, _debug_mode: b
         if !has_token {
             let _ = ctx.submit_command(
                 SET_WARNING,
-                "警告：没有提供凭证，HiPer 将使用临时网络连接并将会在半小时后断连！".to_string(),
+                "警告：没有提供兑换码，将使用临时网络连接并将会在半小时后断连！".to_string(),
                 Target::Auto,
             );
         }
@@ -588,7 +588,7 @@ pub fn stop_hiper_directly() {
 }
 
 pub fn stop_hiper(ctx: ExtEventSink) {
-    let _ = ctx.submit_command(SET_START_TEXT, "正在关闭 HiPer", Target::Auto);
+    let _ = ctx.submit_command(SET_START_TEXT, "正在关闭", Target::Auto);
     let _ = ctx.submit_command(SET_WARNING, "".to_string(), Target::Auto);
     let _ = ctx.submit_command(SET_IP, "".to_string(), Target::Auto);
     let _ = ctx.submit_command(SET_VALID, "".to_string(), Target::Auto);

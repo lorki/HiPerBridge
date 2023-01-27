@@ -1,15 +1,15 @@
 [package]
-name = "hiper-bridge"
+name = "net-cha"
 version = "0.0.2"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [package.metadata.winres]
-OriginalFilename = "HiPerBridge.exe"
-ProductName = "HiPer Bridge"
-FileDescription = "HiPer Bridge - A GUI for HiPer Network Framework"
-LegalCopyright = "Copyright © SteveXMH 2020-2022"
+OriginalFilename = "NetCha.exe"
+ProductName = "奶茶 x 快连"
+FileDescription = "奶茶 x 快连 - 轻松互联 欢乐无限"
+LegalCopyright = "Copyright © 可以奶茶 2022"
 
 [dependencies]
 scl-gui-widgets = { git = "https://github.com/ffip/scl.git", branch = "main" }

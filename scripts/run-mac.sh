@@ -4,7 +4,7 @@ sh ./scripts/install-mac.sh $*
 
 if [ $1 == "--debug" ]
 then
-    "/Applications/HiPer Bridge.app/Contents/MacOS/HiPer Bridge"
+    "/Applications/NetCha.app/Contents/MacOS/NetCha"
 else
-    run "/Applications/HiPer Bridge.app"
+    run "/Applications/NetCha.app"
 fi

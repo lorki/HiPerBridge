@@ -233,14 +233,14 @@ impl Plugin {
             as u32;
         if version < Self::PLUGIN_MINUMUM_VERSION {
             anyhow::bail!(
-                "插件版本过低，此版本的 HiPer Bridge 最低支持 {}，插件元数据版本为 {}",
+                "插件版本过低，此版本的 NetCha 最低支持 {}，插件元数据版本为 {}",
                 Self::PLUGIN_MINUMUM_VERSION,
                 version
             );
         }
         if version > Self::PLUGIN_MAXIMUM_VERSION {
             anyhow::bail!(
-                "插件版本过高，此版本的 HiPer Bridge 最高支持 {}，插件元数据版本为 {}",
+                "插件版本过高，此版本的 NetCha 最高支持 {}，插件元数据版本为 {}",
                 Self::PLUGIN_MAXIMUM_VERSION,
                 version
             );

@@ -5,13 +5,13 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>zh_CN</string>
 	<key>CFBundleDisplayName</key>
-	<string>HiPer Bridge</string>
+	<string>NetCha</string>
 	<key>CFBundleExecutable</key>
-	<string>HiPer Bridge</string>
+	<string>NetCha</string>
 	<key>CFBundleIconFile</key>
 	<string>AppIcon</string>
 	<key>CFBundleIdentifier</key>
-	<string>net.stevexmh.hiperbridge</string>
+	<string>net.natcha.core</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleSupportedPlatforms</key>

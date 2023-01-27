@@ -129,7 +129,7 @@ impl TrayIcon {
             let hwnd = CreateWindowExW(
                 WS_EX_NOACTIVATE | WS_EX_TRANSPARENT | WS_EX_LAYERED | WS_EX_TOOLWINDOW,
                 class_name,
-                w!("HiPer Bridge"),
+                w!("NetCha"),
                 WS_OVERLAPPED,
                 CW_USEDEFAULT,
                 0,
@@ -212,8 +212,8 @@ impl TrayIcon {
                         let mut pt = std::mem::zeroed();
                         GetCursorPos(&mut pt);
 
-                        AppendMenuW(hmenu, MF_STRING, 1, w!("显示 HiPer Bridge"));
-                        AppendMenuW(hmenu, MF_STRING, 2, w!("关闭 HiPer Bridge"));
+                        AppendMenuW(hmenu, MF_STRING, 1, w!("显示 NetCha"));
+                        AppendMenuW(hmenu, MF_STRING, 2, w!("关闭 NetCha"));
 
                         let cmd = TrackPopupMenu(
                             hmenu,

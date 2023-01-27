@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          path: HiPerBridge
+          path: NetCha
       - name: 安装 nightly 频道的 Rust 编译器套件
         uses: actions-rs/toolchain@v1.0.6
         with:
@@ -21,19 +21,19 @@ jobs:
           default: true
       - name: 构建 Windows 发行版本
         run: cargo +nightly build --target=i686-pc-windows-msvc --release -Z build-std=core,alloc,std,panic_abort -Z build-std-features=panic_immediate_abort --verbose
-        working-directory: HiPerBridge
+        working-directory: NetCha
       - name: 上传构建结果
         uses: actions/upload-artifact@v3
         with:
-          name: hiper-bridge.exe
-          path: HiPerBridge/target/i686-pc-windows-msvc/release/hiper-bridge.exe
+          name: net-cha.exe
+          path: NetCha/target/i686-pc-windows-msvc/release/net-cha.exe
   build-linux:
     name: 构建 Linux 版本
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
         with:
-          path: HiPerBridge
+          path: NetCha
       - name: 安装 GTK 3.0 等开发依赖
         env:
           DEBIAN_FRONTEND: noninteractive
@@ -51,19 +51,19 @@ jobs:
       - name: 构建 Linux 发行版本
         run: |
           cargo +nightly build --target=x86_64-unknown-linux-gnu --release -Z build-std=core,alloc,std,panic_abort -Z build-std-features=panic_immediate_abort --verbose
-        working-directory: HiPerBridge
+        working-directory: NetCha
       - name: 上传构建结果
         uses: actions/upload-artifact@v3
         with:
-          name: hiper-bridge-linux-x86_64
-          path: HiPerBridge/target/x86_64-unknown-linux-gnu/release/hiper-bridge
+          name: net-cha-linux-x86_64
+          path: NetCha/target/x86_64-unknown-linux-gnu/release/net-cha
   build-macos:
     name: 构建 MacOS 版本
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
         with:
-          path: HiPerBridge
+          path: NetCha
       - name: 安装 nightly 频道的 Rust 编译器套件
         uses: actions-rs/toolchain@v1.0.6
         with:
@@ -72,12 +72,12 @@ jobs:
           components: rust-src
           override: true
           default: true
-      - name: 构建 HiPer Bridge
+      - name: 构建 NetCha
         run: sh ./scripts/build-mac.sh
-        working-directory: HiPerBridge
+        working-directory: NetCha
       - name: 上传构建结果
         uses: actions/upload-artifact@v3
         with:
-          name: HiPerBridge-universal-darwin.tar.gz
-          path: HiPerBridge/target/HiPerBridge-universal-darwin.tar.gz
+          name: NetCha-universal-darwin.tar.gz
+          path: NetCha/target/NetCha-universal-darwin.tar.gz
       

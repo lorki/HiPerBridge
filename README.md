@@ -1,8 +1,8 @@
-<img src="./assets/hiper-bridge-icon-x256.png" alt="scl-core logo" align="right">
+<img src="./assets/net-cha-icon-x256.png" alt="scl-core logo" align="right">
 <div align="left">
-    <h1>HiPer Bridge</h1>
+    <h1>NetCha</h1>
     <span>
-        HiPer 跨区域组网模块的极简轻量型图形页面
+        NetCha 跨区域组网模块的极简轻量型图形页面
     </span>
 </div>
 

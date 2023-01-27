@@ -892,35 +892,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "hiper-bridge"
-version = "0.0.2"
-dependencies = [
- "anyhow",
- "chrono",
- "clipboard",
- "cocoa",
- "core-foundation",
- "dirs",
- "druid",
- "libflate",
- "nix",
- "objc",
- "once_cell",
- "oneshot",
- "path-absolutize",
- "scl-gui-widgets",
- "scl-macro",
- "serde",
- "sha1_smol",
- "tinyget",
- "tinyjson",
- "winapi",
- "windows 0.39.0",
- "winres",
- "zip",
-]
-
-[[package]]
 name = "hmac"
 version = "0.12.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1155,6 +1126,35 @@ dependencies = [
  "security-framework",
  "security-framework-sys",
  "tempfile",
+]
+
+[[package]]
+name = "net-cha"
+version = "0.0.2"
+dependencies = [
+ "anyhow",
+ "chrono",
+ "clipboard",
+ "cocoa",
+ "core-foundation",
+ "dirs",
+ "druid",
+ "libflate",
+ "nix",
+ "objc",
+ "once_cell",
+ "oneshot",
+ "path-absolutize",
+ "scl-gui-widgets",
+ "scl-macro",
+ "serde",
+ "sha1_smol",
+ "tinyget",
+ "tinyjson",
+ "winapi",
+ "windows 0.39.0",
+ "winres",
+ "zip",
 ]
 
 [[package]]

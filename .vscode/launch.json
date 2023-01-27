@@ -7,15 +7,15 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug executable 'hiper-bridge'",
+            "name": "Debug executable 'net-cha'",
             "cargo": {
                 "args": [
                     "build",
-                    "--bin=hiper-bridge",
-                    "--package=hiper-bridge"
+                    "--bin=net-cha",
+                    "--package=net-cha"
                 ],
                 "filter": {
-                    "name": "hiper-bridge",
+                    "name": "net-cha",
                     "kind": "bin"
                 }
             },
@@ -25,16 +25,16 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug unit tests in executable 'hiper-bridge'",
+            "name": "Debug unit tests in executable 'net-cha'",
             "cargo": {
                 "args": [
                     "test",
                     "--no-run",
-                    "--bin=hiper-bridge",
-                    "--package=hiper-bridge"
+                    "--bin=net-cha",
+                    "--package=net-cha"
                 ],
                 "filter": {
-                    "name": "hiper-bridge",
+                    "name": "net-cha",
                     "kind": "bin"
                 }
             },
