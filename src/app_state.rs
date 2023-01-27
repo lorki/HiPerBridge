@@ -54,7 +54,7 @@ impl Default for AppState {
         Self {
             disabled: false,
             token: "".into(),
-            start_button: "启动",
+            start_button: "加入派对",
             ip: "".into(),
             warning: "".into(),
             valid_at: "".into(),

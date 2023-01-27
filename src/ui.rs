@@ -39,8 +39,6 @@ fn main_page() -> Box<dyn Widget<AppState>> {
             open_url("https://www.yuque.com/ffip/netcha");
         })).with_spacer(5.)
         .with_child(label::new("②.将兑换码复制到下方输入框").show_if(|data: &AppState, _| data.ip.is_empty()).padding((0., 5.)))
-        .with_child(label::new("③.点击启动按钮，加入网络").show_if(|data: &AppState, _| data.ip.is_empty()).padding((0., 5.)))
-        .with_spacer(10.)
         .with_flex_child(
             label::dynamic(|data: &AppState, _| data.warning.to_owned())
                 .with_text_color(Color::Rgba32(0x9D5D00FF))
@@ -125,7 +123,8 @@ fn main_page() -> Box<dyn Widget<AppState>> {
                 .lens(AppState::token)
                 .show_if(|data, _| data.ip.is_empty()),
         )
-        .with_spacer(10.)
+        .with_spacer(5.)
+        .with_child(label::new("③.点击加入派对按钮").show_if(|data: &AppState, _| data.ip.is_empty()).padding((0., 5.)))
         .with_child(
             Flex::row()
                 .with_flex_child(
@@ -136,10 +135,10 @@ fn main_page() -> Box<dyn Widget<AppState>> {
                             let token = data.token.to_owned();
                             let use_tun = data.use_tun;
                             match data.start_button {
-                                "启动" => {
+                                "加入派对" => {
                                     run_hiper_in_thread(ctx, token, use_tun, data.debug_mode);
                                 }
-                                "关闭" => {
+                                "退出派对" => {
                                     std::thread::spawn(move || {
                                         let _ =
                                             ctx.submit_command(SET_DISABLED, true, Target::Auto);

@@ -77,10 +77,10 @@ pub fn run_hiper_in_thread(ctx: ExtEventSink, token: String, use_tun: bool, debu
                 println!("Failed to launch! {:?}", e);
                 let _ = ctx.submit_command(
                     SET_WARNING,
-                    format!("启动时发生错误：{:?}", e),
+                    format!("错误：{:?}", e),
                     Target::Auto,
                 );
-                let _ = ctx.submit_command(SET_START_TEXT, "启动", Target::Auto);
+                let _ = ctx.submit_command(SET_START_TEXT, "加入派对", Target::Auto);
             }
         }
         let _ = ctx.submit_command(SET_DISABLED, false, Target::Auto);
@@ -196,13 +196,13 @@ pub fn run_hiper(ctx: ExtEventSink, token: String, use_tun: bool, _debug_mode: b
         let _ = ctx.submit_command(SET_START_TEXT, "正在获取证书", Target::Auto);
         let res = tinyget::get(format!("https://cert.mcer.cn/{}.yml", token))
             .send()
-            .context("无法获取证书，这有可能是因为下载超时或者是你的兑换码无效")?;
+            .context("无法获取证书，请检查兑换码")?;
         if res.status_code != 200 {
-            anyhow::bail!("无法获取证书，这有可能是因为下载超时或者是你的兑换码无效");
+            anyhow::bail!("无法获取证书，请检查兑换码");
         }
         let mut cert_data = res
             .as_str()
-            .context("无法正确解码证书数据，这有可能是下载出错了")?
+            .context("无法解码证书数据，请重试")?
             .to_owned();
         cert_data.push_str(logger_json_data);
         write_file_safe(&cert_path, cert_data.as_bytes()).context("无法保存证书")?;
@@ -320,7 +320,7 @@ pub fn run_hiper(ctx: ExtEventSink, token: String, use_tun: bool, _debug_mode: b
         }
     }
 
-    let _ = ctx.submit_command(SET_START_TEXT, "正在启动", Target::Auto);
+    let _ = ctx.submit_command(SET_START_TEXT, "正在加入", Target::Auto);
 
     let mut child = Command::new(hiper_path);
 
@@ -342,14 +342,14 @@ pub fn run_hiper(ctx: ExtEventSink, token: String, use_tun: bool, _debug_mode: b
             .stderr(Stdio::piped())
             .creation_flags(0x08000000)
             .spawn()
-            .context("无法启动")?;
+            .context("无法加入")?;
         #[cfg(not(windows))]
         let mut child = child
             .stdin(Stdio::null())
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
             .spawn()
-            .context("无法启动")?;
+            .context("无法加入")?;
 
         plugin::dispatch_event("launch");
 
@@ -453,7 +453,7 @@ pub fn run_hiper(ctx: ExtEventSink, token: String, use_tun: bool, _debug_mode: b
                                 "Hiper certificate for this point is expired" => {
                                     let _ = ctx_c.submit_command(
                                         SET_WARNING,
-                                        "警告：证书已过期！请使用新的证书兑换码重试！".to_string(),
+                                        "警告：证书已过期！请更换兑换码！".to_string(),
                                         Target::Auto,
                                     );
                                     sent = false;
@@ -461,7 +461,7 @@ pub fn run_hiper(ctx: ExtEventSink, token: String, use_tun: bool, _debug_mode: b
                                 "Failed to open udp listener" => {
                                     let _ = ctx_c.submit_command(
                                         SET_WARNING,
-                                        "错误：无法监听服务端口，请确认端口占用情况"
+                                        "错误：服务端口被占用!"
                                             .to_string(),
                                         Target::Auto,
                                     );
@@ -470,7 +470,7 @@ pub fn run_hiper(ctx: ExtEventSink, token: String, use_tun: bool, _debug_mode: b
                                 "Failed to get a tun/tap device" => {
                                     let _ = ctx_c.submit_command(
                                         SET_WARNING,
-                                        "错误：无法获取 TUN/TAP 设备！这应该是你多开导致设备被占用了".to_string(),
+                                        "错误：虚拟网卡被占用!".to_string(),
                                         Target::Auto,
                                     );
                                     sent = false;
@@ -517,7 +517,7 @@ pub fn run_hiper(ctx: ExtEventSink, token: String, use_tun: bool, _debug_mode: b
         if sent && !child.wait().map(|x| x.success()).unwrap_or(false) {
             let _ = ctx_c.submit_command(
                 SET_WARNING,
-                "警告：NetCha 意外退出！5 秒后将会自动重启！\n　　如需阻止自动重启，请点击关闭按钮！".to_string(),
+                "警告：崩溃重启中...".to_string(),
                 Target::Auto,
             );
             plugin::dispatch_event("crashed");
@@ -531,12 +531,12 @@ pub fn run_hiper(ctx: ExtEventSink, token: String, use_tun: bool, _debug_mode: b
     let ip = reciver.recv().context("未能从输出中获取 IP 地址")?;
 
     if ip.is_empty() {
-        let _ = ctx.submit_command(SET_START_TEXT, "启动", Target::Auto);
+        let _ = ctx.submit_command(SET_START_TEXT, "加入派对", Target::Auto);
         stop_hiper_directly();
         if !has_token {
             let _ = ctx.submit_command(
                 SET_WARNING,
-                "错误：入网失败！请检查凭证兑换码是否填写正确！".to_string(),
+                "错误：入网失败！兑换码错误！".to_string(),
                 Target::Auto,
             );
         }
@@ -549,7 +549,7 @@ pub fn run_hiper(ctx: ExtEventSink, token: String, use_tun: bool, _debug_mode: b
             );
         }
         let _ = ctx.submit_command(SET_IP, ip, Target::Auto);
-        let _ = ctx.submit_command(SET_START_TEXT, "关闭", Target::Auto);
+        let _ = ctx.submit_command(SET_START_TEXT, "退出派对", Target::Auto);
     }
 
     Ok(())
@@ -588,12 +588,12 @@ pub fn stop_hiper_directly() {
 }
 
 pub fn stop_hiper(ctx: ExtEventSink) {
-    let _ = ctx.submit_command(SET_START_TEXT, "正在关闭", Target::Auto);
+    let _ = ctx.submit_command(SET_START_TEXT, "正在退出", Target::Auto);
     let _ = ctx.submit_command(SET_WARNING, "".to_string(), Target::Auto);
     let _ = ctx.submit_command(SET_IP, "".to_string(), Target::Auto);
     let _ = ctx.submit_command(SET_VALID, "".to_string(), Target::Auto);
 
     stop_hiper_directly();
 
-    let _ = ctx.submit_command(SET_START_TEXT, "启动", Target::Auto);
+    let _ = ctx.submit_command(SET_START_TEXT, "加入派对", Target::Auto);
 }
